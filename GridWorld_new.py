@@ -124,14 +124,14 @@ class RunAgents:
     def evaluate(self, ch):
         
         location = self.find_location(ch)
-        
+        distance = self.proximity(ch)
         i = 0
         for x in self.reward_states:
             i += 1
             if location == x:
-                return ((np.random.randn()*i)+i), False
+                return (((np.random.randn()*i)+i)-(1/distance)), False
             
-        return -1, False
+        return (-1-(1/distance)), False
 
 
 
@@ -144,12 +144,13 @@ class RunAgents:
 
 
     #Rewrite
-    def proximity_reward(self):
-        location_A,location_B = self.find_location()
+    def proximity(self,ch):
+        location_A = self.find_location('A')
+        location_B = self.find_location('B')
         dist = abs(location_A - location_B)
         vertical_dist = int(dist/9)
         horizontal_dist = dist % 9
-        return  -5/(vertical_dist + horizontal_dist  )
+        return  (vertical_dist + horizontal_dist  )
 
 
 
@@ -254,7 +255,7 @@ class RunAgents:
                 if Q.get((x,act)):
                     max_val.append(Q.get((x,act)))
                 else:
-                    max_val.append(-1000000.0)
+                    max_val.append(0.0)
             if len(max_val) > 0:
                 max_val_array[x] = max(max_val)
                 max_act_array[x] = np.argmax(np.array(max_val))
@@ -264,12 +265,22 @@ class RunAgents:
         plt.title("Q-Values " + str(iteration_number))
         ax.matshow(np.reshape(max_act_array,(9,9)), cmap='rainbow')
 
+        location_A = self.find_location('A')
+        location_B = self.find_location('B')
+        print(location_A)
+
+
         for (i, j), z in np.ndenumerate(np.reshape(max_val_array,(9,9))):
             ax.text(j, i, '%2.2f'%(z), ha='center', va='center', color = 'g',
-                    bbox=dict(boxstyle='round', facecolor='white', edgecolor='0.3'),size = 11)
+                    bbox=dict(boxstyle='round', facecolor='white', edgecolor='0.4'),size = 11)
+
+        #ax.text(location_A%9, int(location_A/9), 'A', ha='center', va='top', color = 'g', bbox=dict(boxstyle='round', facecolor='white', edgecolor='0.3'),size = 11)
 
         #plt.savefig("Figure/Q-Values " + str(iteration_number))
-        plt.show()
+        #plt.draw()
+
+        #plt.show()
+
    
      
     def step(self, isA, move):
@@ -347,16 +358,16 @@ class RunAgents:
                 isA = random.choice([True, False])
                 episode_length = 0
                 while (not done) and episode_length < self.max_iter :
-                    '''if i%1 == 0:
+                    if i%1 == 0:
                         print(episode_length)
                         self.showGrid(self.grid)
-                        time.sleep(1)'''
+                        time.sleep(1)
                     episode_length += 1
-                    self.showGrid(self.grid)
+                    #self.showGrid(self.grid)
                     if isA:
-                        move = self.agent1.epsilon_greedy(self.find_location('A'), self.possible_moves('A'))
+                        move = self.agent1.epsilon_greedy(self.proximity('A'), self.possible_moves('A'))
                     else:
-                        move = self.agent2.epsilon_greedy(self.find_location('B'), self.possible_moves('B'))
+                        move = self.agent2.epsilon_greedy(self.proximity('B'), self.possible_moves('B'))
 
                     #print(self.grid)
                     #print(move,isA) 
@@ -366,22 +377,22 @@ class RunAgents:
                     #print("Reward: ",reward)
                     if (reward == -1):
                         if(isA):
-                            self.agent1.updateQ(reward, self.find_location('A'), self.possible_moves('A'))
+                            self.agent1.updateQ(reward, self.proximity('A'), self.possible_moves('A'))
                         else:
-                            self.agent2.updateQ(reward, self.find_location('B'), self.possible_moves('B'))
+                            self.agent2.updateQ(reward, self.proximity('B'), self.possible_moves('B'))
                         
    
                     elif (reward == -10):
                         if(isA):
-                            self.agent1.updateQ(reward, self.find_location('A'), self.possible_moves('A'))
+                            self.agent1.updateQ(reward, self.proximity('A'), self.possible_moves('A'))
                         else:
-                            self.agent2.updateQ(reward, self.find_location('B'), self.possible_moves('B'))
+                            self.agent2.updateQ(reward, self.proximity('B'), self.possible_moves('B'))
                             
                     else:
                         if(isA):
-                            self.agent1.updateQ(reward, self.find_location('A'), self.possible_moves('A'))
+                            self.agent1.updateQ(reward, self.proximity('A'), self.possible_moves('A'))
                         else:
-                            self.agent2.updateQ(reward, self.find_location('B'), self.possible_moves('B'))
+                            self.agent2.updateQ(reward, self.proximity('B'), self.possible_moves('B'))
                     
                    
                     isA = not isA
