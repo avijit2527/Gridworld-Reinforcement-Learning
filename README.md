@@ -16,14 +16,14 @@ Red -> Down
 
 ### Updates on 26th Sept, 2019:
 
-** Using proximity as state representation **
+**Using proximity as state representation**
 1. When I did not give proximity reward, agents were exploring the entire grid and one agent was roaming around the awerd states.
 2. When I gave reward as -distance, the agents were stuck at both corners near starting points and never crossing each other. They are also showing signs of maintaing distance.
 
 
 ### Updates on 1st Oct, 2019:
 
-1. I tried giving rewards for proximity as ** exp(beta\*distance) **.
+1. I tried giving rewards for proximity as **exp(beta\*distance)**.
 2. I tried beta with values from -20 to +20. I used 50 values, linearly spaced among them.
 3. I used a metric unique_states_traversed. Which counts the number of unique states visited by the agent in an epoch. The details are given below.
 4. Hyperparameters:
