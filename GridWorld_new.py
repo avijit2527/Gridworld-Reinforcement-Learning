@@ -10,6 +10,7 @@ import pickle
 import random
 import time
 import pprint
+import math
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -98,7 +99,7 @@ class GridWorld:
 # In[3]:
 
 class RunAgents:
-    def __init__(self, training = False):
+    def __init__(self, training = False,beta = -5):
         self.grid = [' '] * 81
         
         self.done = False
@@ -110,7 +111,9 @@ class RunAgents:
         self.agent2 = None
         self.reward_states = [30,31]
         self.max_iter = 500
-        
+        self.beta = beta
+        self.A_visited_states = []
+        self.B_visited_states = []
 
         
     def reset(self):
@@ -118,6 +121,8 @@ class RunAgents:
             self.grid = [' '] * 81
             self.grid[0] = 'A'
             self.grid[80] = 'B'
+            self.A_visited_states = []
+            self.B_visited_states = []
             return
 
 
@@ -125,13 +130,14 @@ class RunAgents:
         
         location = self.find_location(ch)
         distance = self.proximity(ch)
-        i = 0
+        proximity_reward = math.exp(self.beta * distance)
+        i = 100
         for x in self.reward_states:
             i += 1
             if location == x:
-                return (((np.random.randn()*i)+i)-(1/distance)), False
+                return (((np.random.randn()*i)+i) - proximity_reward ), False
             
-        return (-1-(1/distance)), False
+        return proximity_reward , False
 
 
 
@@ -319,6 +325,12 @@ class RunAgents:
         else:
             reward, done = self.evaluate('B')
             
+
+        if ch == 'A':
+            self.A_visited_states.append(self.find_location(ch))
+        else:
+            self.B_visited_states.append(self.find_location(ch))
+
         return reward, done
             
 
@@ -338,6 +350,8 @@ class RunAgents:
         last_time = time.time()
         if(self.training):
             reward_array = []
+            unique_states_visited_by_A = []
+            unique_states_visited_by_B = []
             for i in range(iterations):
                 total_reward = 0
                 '''if i%5000 == 0:
@@ -358,10 +372,10 @@ class RunAgents:
                 isA = random.choice([True, False])
                 episode_length = 0
                 while (not done) and episode_length < self.max_iter :
-                    if i%1 == 0:
+                    '''if i%1 == 0:
                         print(episode_length)
                         self.showGrid(self.grid)
-                        time.sleep(1)
+                        time.sleep(1)'''
                     episode_length += 1
                     #self.showGrid(self.grid)
                     if isA:
@@ -396,13 +410,36 @@ class RunAgents:
                     
                    
                     isA = not isA
-                self.showQ(self.agent2.Q,i)
+                unique_states_visited_by_A.append(len(set(self.A_visited_states)))
+                print("Unique States Visited By A: %d"%(len(set(self.A_visited_states))))
+
+
+                unique_states_visited_by_B.append(len(set(self.B_visited_states)))
+                print("Unique States Visited By B: %d"%(len(set(self.B_visited_states))))
+                
+
+
+                #self.showQ(self.agent2.Q,i)
                 reward_array.append(total_reward)                      
                 #print("End of Epoch")
+            mean_A = np.mean(unique_states_visited_by_A)
+            mean_B = np.mean(unique_states_visited_by_B)
+            self.plot_unique_states_visited(unique_states_visited_by_A,mean_A ,'A')
+            self.plot_unique_states_visited(unique_states_visited_by_B,mean_B ,'B')
             #plt.scatter(range(len(reward_array)),reward_array)
             #plt.show()
                
-    
+ 
+
+    def plot_unique_states_visited(self,array,mean,ch):
+        plt.clf()
+        plt.plot(array)
+        plt.axhline(y=mean,c="red")
+        plt.title("Number of Unique States Visited by Agent " + ch +" and Beta:" + str(self.beta))
+        plt.ylabel("Number of States")
+        plt.xlabel("Episode Number")
+        plt.savefig("./Figure/01_Oct_2019/Agent_"+ ch +"_BetaValue_" + str(self.beta) + ".png")
+        
 
 
 
@@ -470,21 +507,23 @@ class RunAgents:
 # In[4]:
 
 
-game = RunAgents(True)
-agent1 = GridWorld(epsilon = 0.2)
-agent2 = GridWorld(epsilon = 0.2)
-game.startTraining(agent1,agent2)
-game.train(100) #train for 200,000 iterations
-game.saveStates() 
+beta_array = np.linspace(-20,20)
+for beta in beta_array:
+    game = RunAgents(True,beta)
+    agent1 = GridWorld(epsilon = 0.2)
+    agent2 = GridWorld(epsilon = 0.2)
+    game.startTraining(agent1,agent2)
+    game.train(100) #train for 200,000 iterations
+    game.saveStates() 
 
 
 # In[ ]:
 
 
 
-agent1 = GridWorld(epsilon = 0.0)
-agent2 = GridWorld(epsilon = 0.0)
-game.playComputer(agent1,agent2)
+#agent1 = GridWorld(epsilon = 0.0)
+#agent2 = GridWorld(epsilon = 0.0)
+#game.playComputer(agent1,agent2)
 
 
 
