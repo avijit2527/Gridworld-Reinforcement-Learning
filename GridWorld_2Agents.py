@@ -10,8 +10,10 @@ import pickle
 import random
 import time
 import pprint
+import os
 import math
 import numpy as np
+import datetime
 import matplotlib.pyplot as plt
 
 
@@ -114,6 +116,8 @@ class RunAgents:
         self.beta = beta
         self.A_visited_states = []
         self.B_visited_states = []
+        x = datetime.datetime.now()
+        self.time = str(x)[0:10]
 
         
     def reset(self):
@@ -282,8 +286,9 @@ class RunAgents:
                     bbox=dict(boxstyle='round', facecolor='white', edgecolor='0.4'),size = 11)
 
         #ax.text(location_A%9, int(location_A/9), 'A', ha='center', va='top', color = 'g', bbox=dict(boxstyle='round', facecolor='white', edgecolor='0.3'),size = 11)
-
-        plt.savefig("Figure/4_Nov_19/Q-Values " + str(iteration_number))
+        if not os.path.exists("Figure/"+ self.time):
+            os.makedirs("Figure/"+ self.time)
+        plt.savefig("Figure/"+ self.time +"/Q-Values " + str(iteration_number))
         #plt.draw()
 
         #plt.show()
@@ -421,7 +426,7 @@ class RunAgents:
                 
 
 
-                self.showQ(self.agent1.Q,i)
+                #self.showQ(self.agent1.Q,i)
                 reward_array.append(total_reward)                      
                 #print("End of Epoch")
             mean_A = np.mean(unique_states_visited_by_A)
@@ -440,7 +445,9 @@ class RunAgents:
         plt.title("Number of Unique States Visited by Agent " + ch +" and Beta:" + str(self.beta))
         plt.ylabel("Number of States")
         plt.xlabel("Episode Number")
-        plt.savefig("./Figure/01_Oct_2019/Agent_"+ ch +"_BetaValue_" + str(self.beta) + ".png")
+        if not os.path.exists("Figure/"+ self.time):
+            os.makedirs("Figure/"+ self.time)
+        plt.savefig("./Figure/" + self.time + "/Agent_"+ ch +"_BetaValue_" + str(self.beta) + ".png")
         
 
 
