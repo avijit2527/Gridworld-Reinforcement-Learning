@@ -38,7 +38,7 @@ class GridWorld:
     
     
     def epsilon_greedy(self, state, possible_moves):
-        self.last_grid = (state)
+        self.last_grid = state
         if(random.random() < self.epsilon):
             move = random.choice(possible_moves)
             self.state_action_last = (self.last_grid,move)
@@ -130,12 +130,12 @@ class RunAgents:
         
         location = self.find_location(ch)
         distance = self.proximity(ch)
-        proximity_reward = math.exp(self.beta * distance)
+        proximity_reward = -1   #-math.exp(self.beta * distance)
         i = 100
         for x in self.reward_states:
             i += 1
             if location == x:
-                return (((np.random.randn()*i)+i) - proximity_reward ), False
+                return (((np.random.randn()*i)+i) + proximity_reward ), False
             
         return proximity_reward , False
 
@@ -156,7 +156,7 @@ class RunAgents:
         dist = abs(location_A - location_B)
         vertical_dist = int(dist/9)
         horizontal_dist = dist % 9
-        return  (vertical_dist + horizontal_dist  )
+        return  math.sqrt((vertical_dist * vertical_dist) + (horizontal_dist * horizontal_dist))
 
 
 
@@ -282,7 +282,7 @@ class RunAgents:
 
         #ax.text(location_A%9, int(location_A/9), 'A', ha='center', va='top', color = 'g', bbox=dict(boxstyle='round', facecolor='white', edgecolor='0.3'),size = 11)
 
-        #plt.savefig("Figure/Q-Values " + str(iteration_number))
+        plt.savefig("Figure/4_Nov_19/Q-Values " + str(iteration_number))
         #plt.draw()
 
         #plt.show()
@@ -354,7 +354,7 @@ class RunAgents:
             unique_states_visited_by_B = []
             for i in range(iterations):
                 total_reward = 0
-                '''if i%5000 == 0:
+                '''if i%20 == 0:
                     start_time = time.time()
                     print("Time Taken")
                     print(start_time - last_time)
@@ -372,12 +372,13 @@ class RunAgents:
                 isA = random.choice([True, False])
                 episode_length = 0
                 while (not done) and episode_length < self.max_iter :
-                    '''if i%1 == 0:
+                    if i%100 == 99:
                         print(episode_length)
                         self.showGrid(self.grid)
-                        time.sleep(1)'''
+                        time.sleep(1)
                     episode_length += 1
                     #self.showGrid(self.grid)
+                    #time.sleep(1)
                     if isA:
                         move = self.agent1.epsilon_greedy(self.proximity('A'), self.possible_moves('A'))
                     else:
@@ -419,7 +420,7 @@ class RunAgents:
                 
 
 
-                #self.showQ(self.agent2.Q,i)
+                self.showQ(self.agent1.Q,i)
                 reward_array.append(total_reward)                      
                 #print("End of Epoch")
             mean_A = np.mean(unique_states_visited_by_A)
@@ -509,6 +510,7 @@ class RunAgents:
 
 beta_array = np.linspace(-20,20)
 for beta in beta_array:
+    print(beta)
     game = RunAgents(True,beta)
     agent1 = GridWorld(epsilon = 0.2)
     agent2 = GridWorld(epsilon = 0.2)
