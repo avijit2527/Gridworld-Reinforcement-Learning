@@ -17,6 +17,8 @@ import datetime
 import matplotlib.pyplot as plt
 
 
+distance_graph_array = []
+
 # In[2]:
 
 
@@ -141,7 +143,7 @@ class RunAgents:
             if location == x:
                 proximity_reward = 100 + proximity_reward   #(((np.random.randn()*i)+i) + proximity_reward )
 
-        print("Reward: ",proximity_reward)    
+        #print("Reward: ",proximity_reward)    
         return proximity_reward , False
 
 
@@ -358,6 +360,7 @@ class RunAgents:
             reward_array = []
             unique_states_visited_by_A = []
             unique_states_visited_by_B = []
+            average_distance_per_episode_array = []    #Average distance between two agents
             for i in range(iterations):
                 total_reward = 0
                 '''if i%20 == 0:
@@ -377,12 +380,14 @@ class RunAgents:
                 done = False
                 isA = random.choice([True, False])
                 episode_length = 0
+                average_distance_per_episode = 0    #Average distance between two agents
                 while (not done) and episode_length < self.max_iter :
-                    if i%100 == 1:
+                    '''if i%100 == 1:
                         print(episode_length)
                         self.showGrid(self.grid)
-                        time.sleep(1)
+                        time.sleep(1)'''
                     episode_length += 1
+                    average_distance_per_episode = average_distance_per_episode + (self.proximity("A")-average_distance_per_episode)/episode_length
                     #self.showGrid(self.grid)
                     #time.sleep(1)
                     if isA:
@@ -417,22 +422,36 @@ class RunAgents:
                     
                    
                     isA = not isA
+
+  
+                average_distance_per_episode_array.append(average_distance_per_episode)
+                print("Average distance between the agents: %f"%(average_distance_per_episode))
+
                 unique_states_visited_by_A.append(len(set(self.A_visited_states)))
-                print("Unique States Visited By A: %d"%(len(set(self.A_visited_states))))
+                #print("Unique States Visited By A: %d"%(len(set(self.A_visited_states))))
 
 
                 unique_states_visited_by_B.append(len(set(self.B_visited_states)))
-                print("Unique States Visited By B: %d"%(len(set(self.B_visited_states))))
+                #print("Unique States Visited By B: %d"%(len(set(self.B_visited_states))))
                 
 
 
                 #self.showQ(self.agent1.Q,i)
                 reward_array.append(total_reward)                      
                 #print("End of Epoch")
+
+
+
+            distance_graph_array.append(np.mean(average_distance_per_episode_array))
+            print("Average distance per run: %f "%(np.mean(average_distance_per_episode_array)))
+            self.plot_average_distance(average_distance_per_episode_array,np.mean(average_distance_per_episode_array),i+1)
+            #plt.plot(average_distance_per_episode_array)
+            #plt.axhline(y=np.mean(average_distance_per_episode_array),c="red")
+            #plt.show()
             mean_A = np.mean(unique_states_visited_by_A)
             mean_B = np.mean(unique_states_visited_by_B)
-            self.plot_unique_states_visited(unique_states_visited_by_A,mean_A ,'A')
-            self.plot_unique_states_visited(unique_states_visited_by_B,mean_B ,'B')
+            #self.plot_unique_states_visited(unique_states_visited_by_A,mean_A ,'A')
+            #self.plot_unique_states_visited(unique_states_visited_by_B,mean_B ,'B')
             #plt.scatter(range(len(reward_array)),reward_array)
             #plt.show()
                
@@ -442,14 +461,25 @@ class RunAgents:
         plt.clf()
         plt.plot(array)
         plt.axhline(y=mean,c="red")
-        plt.title("Number of Unique States Visited by Agent " + ch +" and Beta:" + str(self.beta))
+        plt.title("Number of Unique States Visited by Agent " + ch +" and Beta:" + str(self.beta)[0:7])
         plt.ylabel("Number of States")
         plt.xlabel("Episode Number")
         if not os.path.exists("Figure/"+ self.time):
             os.makedirs("Figure/"+ self.time)
-        plt.savefig("./Figure/" + self.time + "/Agent_"+ ch +"_BetaValue_" + str(self.beta) + ".png")
+        plt.savefig("./Figure/" + self.time + "/Agent_"+ ch +"_BetaValue_" + str(self.beta)[0:7] + ".png")
         
 
+
+    def plot_average_distance(self,array,mean,iteration):
+        plt.clf()
+        plt.plot(array)
+        plt.axhline(y=mean,c="red")
+        plt.title("Distance between two Agents for iter " + str(iteration) +" and Beta:" + str(self.beta)[0:7])
+        plt.ylabel("Distance")
+        plt.xlabel("Iterations")
+        if not os.path.exists("Figure/"+ self.time):
+            os.makedirs("Figure/"+ self.time)
+        plt.savefig("./Figure/" + self.time + "/Iter_"+ str(iteration) +"_BetaValue_" + str(self.beta)[0:7] + ".png")
 
 
     
@@ -516,7 +546,7 @@ class RunAgents:
 # In[4]:
 
 
-beta_array = np.linspace(-20,20)
+beta_array = np.linspace(-20,20,num=50)
 for beta in beta_array:
     print(beta)
     game = RunAgents(True,beta)
@@ -526,6 +556,10 @@ for beta in beta_array:
     game.train(100) #train for 200,000 iterations
     game.saveStates() 
 
+
+fig, ax = plt.subplots()
+ax.plot(distance_graph_array)
+plt.show()
 
 # In[ ]:
 
