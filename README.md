@@ -37,7 +37,7 @@ Red -> Down
 ### Updates on 12th Nov, 2019:
 
 1. I have calculated the average distance per iteration.
-2. Plotted the graph for the distance vs number of iterations for every beta value.
+2. Plotted the graph for the distance vs number of iterations for every beta value(Can be found at Figure/2019-11-12 folder).
 3. Calculated and plotted the average distance per beta value.
 4. **Observation**: The two agents remain in the same state as the distance between the distance between the two agents is constant and they take the same action.
 
