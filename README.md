@@ -33,3 +33,12 @@ Red -> Down
 5. I have plotted graphs of unique_states_traversed for each value of beta for 100 iterations. Red line shows the mean value of unique_states_traversed for each beta value. Graphs can be found at "./Figure/01_Oct_2019/" folder.
 6. **Observation**: As we increase the beta value the mean value of unique_states_traversed is decreasing. But as there is no negetive reward for steps the agent is roaming around the entire gridworld. Also when the reward is really high for maintaing distance, it does not roam around the reward states very often.
 7. Graph Naming Convention: Agent_NameHere_BetaValue_ValueHere
+
+### Updates on 12th Nov, 2019:
+
+1. I have calculated the average distance per iteration.
+2. Plotted the graph for the distance vs number of iterations for every beta value.
+3. Calculated and plotted the average distance per beta value.
+4. **Observation**: The two agents remain in the same state as the distance between the distance between the two agents is constant and they take the same action.
+
+![](./Figure/2019-11-12/Average_Distance_per_Beta_Value.png)

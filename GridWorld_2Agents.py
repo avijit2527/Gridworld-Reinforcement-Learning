@@ -441,8 +441,8 @@ class RunAgents:
                 #print("End of Epoch")
 
 
-
-            distance_graph_array.append(np.mean(average_distance_per_episode_array))
+            print(distance_graph_array)
+            distance_graph_array.append([np.mean(average_distance_per_episode_array),self.beta])
             print("Average distance per run: %f "%(np.mean(average_distance_per_episode_array)))
             self.plot_average_distance(average_distance_per_episode_array,np.mean(average_distance_per_episode_array),i+1)
             #plt.plot(average_distance_per_episode_array)
@@ -557,8 +557,9 @@ for beta in beta_array:
     game.saveStates() 
 
 
+distance_graph_array = np.array(distance_graph_array)
 fig, ax = plt.subplots()
-ax.plot(distance_graph_array)
+ax.plot(distance_graph_array.T[1],distance_graph_array.T[0])
 plt.show()
 
 # In[ ]:
