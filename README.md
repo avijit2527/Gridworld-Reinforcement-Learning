@@ -42,3 +42,13 @@ Red -> Down
 4. **Observation**: The two agents remain in the same state as the distance between the distance between the two agents is constant and they take the same action.
 
 ![](./Figure/2019-11-12/Average_Distance_per_Beta_Value.png)
+
+
+
+### Updates on 16th Nov, 2019:
+
+1. Changed the state representation to the state value.
+2. Created animation to see the behavior of the agent under different beta value.
+3. **Observation**: After changing the state representation, the average distance between the agents increases with the increase in beta value. Shown in graph:
+
+![](./Figure/2019-11-16/Average_Distance_per_Beta_Value.png)

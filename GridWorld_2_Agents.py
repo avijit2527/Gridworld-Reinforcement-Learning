@@ -21,6 +21,8 @@ import os
 import math
 import numpy as np
 import datetime
+import glob
+from PIL import Image
 import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
@@ -396,10 +398,10 @@ class RunAgents:
                 episode_length = 0
                 average_distance_per_episode = 0    #Average distance between two agents
                 while (not done) and episode_length < self.max_iter :
-                    '''if i%100 == 1:
-                        print(episode_length)
-                        self.showGrid(self.grid)
-                        time.sleep(1)'''
+                    if i%100 == 99:
+                        #print(episode_length)
+                        self.showGrid(self.grid,episode_length)
+                        #time.sleep(1)
                     episode_length += 1
                     average_distance_per_episode = average_distance_per_episode + (self.proximity("A")-average_distance_per_episode)/episode_length
                     #self.showGrid(self.grid)
@@ -455,10 +457,10 @@ class RunAgents:
                 #print("End of Epoch")
 
 
-            print(distance_graph_array)
+            #print(distance_graph_array)
             distance_graph_array.append([np.mean(average_distance_per_episode_array),self.beta])
             print("Average distance per run: %f "%(np.mean(average_distance_per_episode_array)))
-            self.plot_average_distance(average_distance_per_episode_array,np.mean(average_distance_per_episode_array),i+1)
+            #self.plot_average_distance(average_distance_per_episode_array,np.mean(average_distance_per_episode_array),i+1)
             #plt.plot(average_distance_per_episode_array)
             #plt.axhline(y=np.mean(average_distance_per_episode_array),c="red")
             #plt.show()
@@ -496,21 +498,34 @@ class RunAgents:
         plt.savefig("./Figure/" + self.time + "/Iter_"+ str(iteration) +"_BetaValue_" + str(self.beta)[0:7] + ".png")
 
 
+
     
-    def showGrid(self, grid):
-        print("------------------------------------")
-        print("------------------------------------")
-        pprint.pprint(grid[0:9])
-        pprint.pprint(grid[9:18])
-        pprint.pprint(grid[18:27])
-        pprint.pprint(grid[27:36])
-        pprint.pprint(grid[36:45])
-        pprint.pprint(grid[45:54])
-        pprint.pprint(grid[54:63])
-        pprint.pprint(grid[63:72])
-        pprint.pprint(grid[72:81])
-        print("------------------------------------")
-        print("------------------------------------")
+    def showGrid(self, grid_main,iteration):
+        grid = grid_main.copy()
+        for itr,x in enumerate(grid):
+            if x == 'A':
+                grid[itr] = 1
+            elif x == 'B':
+                grid[itr] = 5
+            else:
+                grid[itr] = 0
+
+        fig,ax = plt.subplots()
+        ax.axes.get_xaxis().set_visible(False)
+        ax.axes.get_yaxis().set_visible(False)
+        self.mat = ax.matshow(np.reshape(grid,(9,9)))
+        plt.colorbar(self.mat)
+        for (i, j), z in np.ndenumerate(np.reshape(grid,(9,9))):
+            ax.text(j, i, ' ', ha='center', va='center', color = 'g',
+                    bbox=dict(boxstyle='round', facecolor='white', edgecolor='0.4'),size = 11)        
+
+        if not os.path.exists("Figure/"+ self.time):
+            os.makedirs("Figure/"+ self.time)
+        if not os.path.exists("./Figure/%s/%4.4f"%(self.time,self.beta)):
+            os.makedirs("./Figure/%s/%4.4f"%(self.time,self.beta))
+        plt.savefig("./Figure/%s/%4.4f/%.4d.png"%(self.time,self.beta,iteration))
+        plt.close()
+
 
 
                 
@@ -566,8 +581,18 @@ for beta in beta_array:
     agent1 = GridWorld(epsilon = 0.2)
     agent2 = GridWorld(epsilon = 0.2)
     game.startTraining(agent1,agent2)
-    game.train(100) #train for 200,000 iterations
+    game.train(100)
     game.saveStates() 
+    #Creating GIF for visulization
+    x = datetime.datetime.now()
+    now = str(x)[0:10]
+    fp_in = "./Figure/%s/%4.4f/*.png"%(now,beta)
+    fp_out = "./GIF/%4.4f.gif"%(beta)
+
+    img, *imgs = [Image.open(f) for f in sorted(glob.glob(fp_in))]
+    img.save(fp=fp_out, format='GIF', append_images=imgs, save_all=True, duration=1000, loop=0)
+
+
 
 
 distance_graph_array = np.array(distance_graph_array)
@@ -576,48 +601,16 @@ ax.plot(distance_graph_array.T[1],distance_graph_array.T[0])
 plt.show()
 
 
-# In[ ]:
 
 
 
 
 
-# In[ ]:
 
 
 
 
 
-# In[1]:
-
-
-import numpy as np
-import matplotlib.pyplot as plt
-from matplotlib.animation import FuncAnimation
-
-
-# In[2]:
-
-
-x_data = []
-y_data = []
-
-fig, ax = plt.subplots()
-ax.set_xlim(0,105)
-ax.set_ylim(0,12)
-line, = ax.plot(0,0)
-
-def animation_frame(i):
-    x_data.append(i*10)
-    y_data.append(i)
-    
-    line.set_xdata(x_data)
-    line.set_ydata(y_data)
-    return line
-
-
-animation = FuncAnimation(fig,func = animation_frame, frames = np.arange(0,10,0.01), interval = 10)
-plt.show()
 
 
 
