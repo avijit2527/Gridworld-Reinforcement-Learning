@@ -587,7 +587,9 @@ for beta in beta_array:
     x = datetime.datetime.now()
     now = str(x)[0:10]
     fp_in = "./Figure/%s/%4.4f/*.png"%(now,beta)
-    fp_out = "./GIF/%4.4f.gif"%(beta)
+    if not os.path.exists("./GIF/%s"%(now)):
+            os.makedirs("./GIF/%s"%(now))
+    fp_out = "./GIF/%s/%4.4f.gif"%(now,beta)
 
     img, *imgs = [Image.open(f) for f in sorted(glob.glob(fp_in))]
     img.save(fp=fp_out, format='GIF', append_images=imgs, save_all=True, duration=1000, loop=0)

@@ -52,3 +52,7 @@ Red -> Down
 3. **Observation**: After changing the state representation, the average distance between the agents increases with the increase in beta value. Shown in graph:
 
 ![](./Figure/2019-11-16/Average_Distance_per_Beta_Value.png)
+
+4. For Beta Value = 11.8367 the agents are behaving int he following way (Rest can be found inside GIF folder):
+
+![](./GIF/2019-11-16/11.8367.gif)
