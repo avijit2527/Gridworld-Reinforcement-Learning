@@ -3,6 +3,8 @@
 # @author Avijit Roy
 
 
+# In[ ]:
+
 #Importing the required module
 import random
 import pickle
@@ -19,6 +21,9 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from matplotlib import style
 
+
+# In[ ]:
+coverage_array = []
 
 
 # In[ ]:
@@ -121,6 +126,9 @@ class RunAgents:
         
         x = datetime.datetime.now()
         self.time = str(x)[0:10]
+        
+        self.visited_states = []
+        self.k_coverage = 50       #last k steps to calculate coverage
             
       
       
@@ -141,6 +149,7 @@ class RunAgents:
                 x = indices[i][0]
                 y = indices[i][1]
                 self.grid[x][y] = i
+                self.visited_states.append([x,y])
             return
             
            
@@ -148,7 +157,7 @@ class RunAgents:
     def evaluate(self, ch):             
         location = self.find_location(ch)
         distance = self.proximity(ch) 
-        proximity_reward = -math.exp(self.beta * distance)  
+        proximity_reward = math.exp(self.beta * distance)  
         i = 100
         for x in self.reward_states:
             i += 1
@@ -198,17 +207,22 @@ class RunAgents:
             
     def step(self, agent, move):
         location = self.find_location(agent)
+        new_location_x = location[0]
+        new_location_y = location[1]
         if move != 's':
             self.grid[location[0]][location[1]] = -1
         if move == 'd':
-            self.grid[location[0]+1][location[1]] = agent
+            new_location_x += 1
         if move == 'l':
-            self.grid[location[0]][location[1]-1] = agent
+            new_location_y -= 1
         if move == 'u':
-            self.grid[location[0]-1][location[1]] = agent
+            new_location_x -= 1
         if move == 'r':
-            self.grid[location[0]][location[1]+1] = agent   
+            new_location_y += 1
+
         
+        self.grid[new_location_x][new_location_y] = agent
+        self.visited_states.append([new_location_x,new_location_y])
         reward, done = self.evaluate(agent)
 
         return reward, done
@@ -248,6 +262,9 @@ class RunAgents:
                     self.agents[agent].updateQ(reward, self.find_location(agent), self.possible_moves(agent))
                     agent = (agent + 1) % self.num_agents
                     
+            coverage = self.calculate_coverage(self.k_coverage)   
+            coverage_array.append([self.num_agents,coverage])                 
+                    
                     
                     
     
@@ -269,6 +286,15 @@ class RunAgents:
         plt.savefig("./Figure/%s/%d/%4.4f/%.4d.png"%(self.time,self.num_agents,self.beta,iteration))
         plt.close()
             
+     
+    def calculate_coverage(self, k):
+         last_k = np.array(self.visited_states[-k:])
+         last_k_T = last_k.T
+         last_k = list(zip(last_k_T[0],last_k_T[1]))    #from 2d array to 1d array of tuple
+         print(k,last_k)
+         coverage = len(set(last_k))
+         return coverage/(self.width*self.height)
+     
             
             
     def saveStates(self):
@@ -291,7 +317,7 @@ class RunAgents:
 
 num_agents_array = [3,4,5,6,7,8,9,10]
 for num_agents in num_agents_array:
-    beta_array = np.linspace(-20,20,num=50)
+    beta_array = [2.5] #np.linspace(-20,20,num=50)
     for beta in beta_array:
         print(beta,num_agents)
         agents = np.empty([num_agents],dtype = GridWorld) 
@@ -301,11 +327,25 @@ for num_agents in num_agents_array:
         game.startTraining(agents)
         game.train(100)
         game.saveStates()
+        #Creating GIF for visulization
+        x = datetime.datetime.now()
+        now = str(x)[0:10]
+        fp_in = "./Figure/%s/%d/%4.4f/*.png"%(now,num_agents,beta)
+        if not os.path.exists("./GIF/%s/%d"%(now,num_agents)):
+                os.makedirs("./GIF/%s/%d"%(now,num_agents))
+        fp_out = "./GIF/%s/%d/%4.4f.gif"%(now,num_agents,beta)
+
+        img, *imgs = [Image.open(f) for f in sorted(glob.glob(fp_in))]
+        img.save(fp=fp_out, format='GIF', append_images=imgs, save_all=True, duration=300, loop=0)
        
             
             
             
-            
+#Plotting coverage vs number of agents
+coverage_array = np.array(coverage_array)
+fig, ax = plt.subplots()
+ax.plot(coverage_array.T[0],coverage_array.T[1])
+plt.show()            
             
             
             
