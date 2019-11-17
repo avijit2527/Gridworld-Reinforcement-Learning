@@ -14,7 +14,6 @@
 
 import random
 import pickle
-import random
 import time
 import pprint
 import os
@@ -23,6 +22,7 @@ import numpy as np
 import datetime
 import glob
 from PIL import Image
+
 import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
