@@ -299,14 +299,14 @@ class RunAgents:
             
     def saveStates(self):
         for i in range(self.num_agents):
-            self.agents[i].saveQtable("agent%dstates"%(i))
+            self.agents[i].saveQtable("./Agent_States/agent%dstates"%(i))
 
         
         
         #save Qtables
     def loadStates(self):
         for i in range(self.num_agents):
-            self.agents[i].loadQtable("agent%dstates"%(i))
+            self.agents[i].loadQtable("./Agent_States/agent%dstates"%(i))
 
             
             

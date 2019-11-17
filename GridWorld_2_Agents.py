@@ -560,14 +560,14 @@ class RunAgents:
                 
 
     def saveStates(self):
-        self.agent1.saveQtable("agent1states")
-        self.agent2.saveQtable("agent2states")    
+        self.agent1.saveQtable("./Agent_States/agent1states")
+        self.agent2.saveQtable("./Agent_States/agent2states")    
         
         
         #save Qtables
     def loadStates(self):
-        self.computer_1.loadQtable("agent1states")
-        self.computer_2.loadQtable("agent2states")
+        self.computer_1.loadQtable("./Agent_States/agent1states")
+        self.computer_2.loadQtable("./Agent_States/agent2states")
 
 
 # In[ ]:
