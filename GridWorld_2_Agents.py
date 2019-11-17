@@ -152,7 +152,7 @@ class RunAgents:
         
         location = self.find_location(ch)
         distance = self.proximity(ch)
-        proximity_reward = -math.exp(self.beta * distance)
+        proximity_reward = math.exp(self.beta * distance)
         i = 100
         for x in self.reward_states:
             i += 1

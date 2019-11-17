@@ -315,7 +315,7 @@ class RunAgents:
             
      
 
-num_agents_array = [3,4,5,6,7,8,9,10]
+num_agents_array = [2,3,4,5,6,7,8,9,10]
 for num_agents in num_agents_array:
     beta_array = [2.5] #np.linspace(-20,20,num=50)
     for beta in beta_array:
