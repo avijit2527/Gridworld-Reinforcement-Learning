@@ -6,12 +6,15 @@
 
 ![](./Figure/2019-11-20/coverage_vs_numAgents_100_runs.png)
 
-
+**Traffic Control Problem Formulation Using  RL:**
+* We will create roads in a grid with different probabilities of vehicles taking a turn (Like, a vechicle is more likely to take a highway when it reaches the highway, rather then crossing it).
+* Reward can be movement movement of agent per time unit globally plus a small negative reward for congestion locally.
+* Evaluation Metric: We can compare our model with a round robin solution to check the mobility of the entire grid.
 
 ### Updates on 17th Nov, 2019:
 1. Created a variable sized gridworld with variable number of agents
 2. Implemented the coverage metric
-3. Added annew action: 's' (remain in the same state)
+3. Added a new action: 's' (remain in the same state)
 4. Beta = 2.5
 5. k = 50 for calculating coverage
 
