@@ -1,14 +1,14 @@
 # Gridworld-Reinforcement-Learning
-Updates regarding project
+##<span style="color:Green">Updates regarding project:</span>
 
-### Updates on 20th Nov, 2019:
+###<span style="color:purple"> Updates on 20th Nov, 2019:
 1. I have regenerated the coverage vs num_of_agents curve by averaging over 100 runs. Std. deviation is shown by shaded portion.
 
 ![](./Figure/2019-11-20/coverage_vs_numAgents_100_runs.png)
 
 
 
-### Updates on 17th Nov, 2019:
+###<span style="color:purple"> Updates on 17th Nov, 2019:</span>
 1. Created a variable sized gridworld with variable number of agents
 2. Implemented the coverage metric
 3. Added annew action: 's' (remain in the same state)
@@ -17,7 +17,7 @@ Updates regarding project
 
 ![](./Figure/2019-11-17/CoverageVsNumOfAgents.png)   ![](./GIF/2019-11-17/6/2.5000.gif)
 
-### Updates on 16th Nov, 2019:
+###<span style="color:purple"> Updates on 16th Nov, 2019:</span>
 
 1. Changed the state representation to the state value.
 2. Created animation to see the behavior of the agent under different beta value.
@@ -32,7 +32,7 @@ Updates regarding project
 
 
 
-### Updates on 12th Nov, 2019:
+###<span style="color:purple"> Updates on 12th Nov, 2019:</span>
 
 1. I have calculated the average distance per iteration.
 2. Plotted the graph for the distance vs number of iterations for every beta value(Can be found at Figure/2019-11-12 folder).
@@ -44,7 +44,7 @@ Updates regarding project
 
 
 
-### Updates on 1st Oct, 2019:
+###<span style="color:purple"> Updates on 1st Oct, 2019:</span>
 
 1. I tried giving rewards for proximity as **exp(beta\*distance)**.
 2. I tried beta with values from -20 to +20. I used 50 values, linearly spaced among them.
@@ -60,7 +60,7 @@ Updates regarding project
 
 
 
-### Updates on 26th Sept, 2019:
+###<span style="color:purple"> Updates on 26th Sept, 2019:</span>
 
 **Using proximity as state representation**
 1. When I did not give proximity reward, agents were exploring the entire grid and one agent was roaming around the awerd states.
