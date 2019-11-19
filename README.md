@@ -1,6 +1,13 @@
 # Gridworld-Reinforcement-Learning
 Updates regarding project
 
+### Updates on 20th Nov, 2019:
+1. I have regenerated the coverage vs num_of_agents curve by averaging over 100 runs. Std. deviation is shown by shaded portion.
+
+![](./Figure/2019-11-20/coverage_vs_numAgents_100_runs.png)
+
+
+
 ### Updates on 17th Nov, 2019:
 1. Created a variable sized gridworld with variable number of agents
 2. Implemented the coverage metric

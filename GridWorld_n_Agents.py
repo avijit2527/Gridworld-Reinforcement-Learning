@@ -22,8 +22,7 @@ import matplotlib.animation as animation
 from matplotlib import style
 
 
-# In[ ]:
-coverage_array = []
+
 
 
 # In[ ]:
@@ -128,7 +127,7 @@ class RunAgents:
         self.time = str(x)[0:10]
         
         self.visited_states = []
-        self.k_coverage = 50       #last k steps to calculate coverage
+        self.k_coverage = 50 *   self.num_agents     #last k steps to calculate coverage
             
       
       
@@ -155,9 +154,12 @@ class RunAgents:
            
            
     def evaluate(self, ch):             
+        proximity_reward = 0
         location = self.find_location(ch)
-        distance = self.proximity(ch) 
-        proximity_reward = math.exp(self.beta * distance)  
+        for x in range(self.num_agents):
+            distance = self.proximity(ch,x) 
+            proximity_reward += (math.exp(self.beta * distance) - 1) # - 1 for own distance exp(0)
+        #print(proximity_reward)
         i = 100
         for x in self.reward_states:
             i += 1
@@ -176,14 +178,11 @@ class RunAgents:
 
 
 
-    def proximity(self,ch):
-        location_ch = self.find_location(ch)
-        result = 0
-        for x in range(self.num_agents):
-            temp_location = self.find_location(x)
-            result += np.linalg.norm(location_ch - temp_location)
-
-        return  result
+    def proximity(self,ch1, ch2):
+        location_ch_1 = self.find_location(ch1)
+        location_ch_2 = self.find_location(ch2)
+        
+        return  np.linalg.norm(location_ch_1 - location_ch_2)
 
     
             
@@ -252,9 +251,9 @@ class RunAgents:
                 agent = 0
                 episode_length = 0
                 while (not done) and episode_length < self.max_iter :
-                    if i%100 == 99:
+                    #if i%100 == 99:
                         #print(episode_length)
-                        self.showGrid(self.grid,episode_length)
+                        #self.showGrid(self.grid,episode_length)
                         #time.sleep(1)
                     episode_length += 1
                     move = self.agents[agent].epsilon_greedy(self.find_location(agent), self.possible_moves(agent))
@@ -283,6 +282,7 @@ class RunAgents:
 
         if not os.path.exists("./Figure/%s/%d/%4.4f"%(self.time,self.num_agents,self.beta)):
             os.makedirs("./Figure/%s/%d/%4.4f"%(self.time,self.num_agents,self.beta))
+        #plt.show()
         plt.savefig("./Figure/%s/%d/%4.4f/%.4d.png"%(self.time,self.num_agents,self.beta,iteration))
         plt.close()
             
@@ -308,50 +308,90 @@ class RunAgents:
         for i in range(self.num_agents):
             self.agents[i].loadQtable("./Agent_States/agent%dstates"%(i))
 
-            
-            
-            
+   
+   
+   
+   
+   
+
+x = datetime.datetime.now()
+now = str(x)[0:10]            
+number_of_runs = 100
+
+
+
+coverage_array_over_multiple_runs = []
+for run in range(number_of_runs):
+                    
+ 
+    # In[ ]:
+    coverage_array = []            
             
             
      
+    print("Run No. %d"%(run))
+    num_agents_array = [2,3,4,5,6,7,8,9,10]
+    for num_agents in num_agents_array:
+        beta_array = [1.5] #np.linspace(-20,20,num=50)
+        for beta in beta_array:
+            print(beta,num_agents)
+            agents = np.empty([num_agents],dtype = GridWorld) 
+            game = RunAgents(10,10,num_agents,True,beta)   
+            for i in range(num_agents):
+                agents[i] = GridWorld(epsilon = 0.2)
+            game.startTraining(agents)
+            game.train(100)
+            game.saveStates()
+            #Creating GIF for visulization
+            '''fp_in = "./Figure/%s/%d/%4.4f/*.png"%(now,num_agents,beta)
+            if not os.path.exists("./GIF/%s/%d"%(now,num_agents)):
+                    os.makedirs("./GIF/%s/%d"%(now,num_agents))
+            fp_out = "./GIF/%s/%d/%4.4f.gif"%(now,num_agents,beta)
 
-num_agents_array = [2,3,4,5,6,7,8,9,10]
-for num_agents in num_agents_array:
-    beta_array = [2.5] #np.linspace(-20,20,num=50)
-    for beta in beta_array:
-        print(beta,num_agents)
-        agents = np.empty([num_agents],dtype = GridWorld) 
-        game = RunAgents(10,10,num_agents,True,beta)   
-        for i in range(num_agents):
-            agents[i] = GridWorld(epsilon = 0.2)
-        game.startTraining(agents)
-        game.train(100)
-        game.saveStates()
-        #Creating GIF for visulization
-        x = datetime.datetime.now()
-        now = str(x)[0:10]
-        fp_in = "./Figure/%s/%d/%4.4f/*.png"%(now,num_agents,beta)
-        if not os.path.exists("./GIF/%s/%d"%(now,num_agents)):
-                os.makedirs("./GIF/%s/%d"%(now,num_agents))
-        fp_out = "./GIF/%s/%d/%4.4f.gif"%(now,num_agents,beta)
-
-        img, *imgs = [Image.open(f) for f in sorted(glob.glob(fp_in))]
-        img.save(fp=fp_out, format='GIF', append_images=imgs, save_all=True, duration=300, loop=0)
+            img, *imgs = [Image.open(f) for f in sorted(glob.glob(fp_in))]
+            img.save(fp=fp_out, format='GIF', append_images=imgs, save_all=True, duration=300, loop=0)'''
        
             
             
+    coverage_array_over_multiple_runs.append(coverage_array)        
+    #Plotting coverage vs number of agents
+    coverage_array = np.array(coverage_array)
+    fig, ax = plt.subplots()
+    ax.plot(coverage_array.T[0],coverage_array.T[1])
+    plt.title("Coverage vs Num_of_Agents")
+    plt.xlabel("Num of Agents")
+    plt.ylabel("Coverage")
+    #plt.show()  
+    plt.savefig("./Figure/%s/%2.2d.png"%(now,run))
+    plt.close()          
             
+    
+
+coverage_array_over_multiple_runs = np.array(coverage_array_over_multiple_runs)   
+np.save("coverage_vs_numAgents",coverage_array_over_multiple_runs)  
+
+
+
+coverage_array_over_multiple_runs = np.load("./coverage_vs_numAgents.npy")
+
+
+#print(coverage_array_over_multiple_runs)
+print(np.mean(coverage_array_over_multiple_runs,axis = 0))
+print(np.std(coverage_array_over_multiple_runs,axis = 0))
+
+mean_coverage_array = np.mean(coverage_array_over_multiple_runs, axis = 0)
+std_coverage_array = np.std(coverage_array_over_multiple_runs,axis = 0)
+
 #Plotting coverage vs number of agents
-coverage_array = np.array(coverage_array)
 fig, ax = plt.subplots()
-ax.plot(coverage_array.T[0],coverage_array.T[1])
-plt.show()            
-            
-            
-            
-            
-            
-            
+ax.plot(mean_coverage_array.T[0],mean_coverage_array.T[1], c='r')
+ax.fill_between(mean_coverage_array.T[0],mean_coverage_array.T[1] - std_coverage_array.T[1],mean_coverage_array.T[1] + std_coverage_array.T[1],alpha = 0.1)
+plt.title("Coverage vs Num_of_Agents for %d Runs"%(number_of_runs))
+plt.xlabel("Num of Agents")
+plt.ylabel("Coverage")
+#plt.show()  
+plt.savefig("./Figure/%s/coverage_vs_numAgents.png"%(now))
+plt.close()
             
             
             
