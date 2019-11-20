@@ -4,7 +4,11 @@
 ### Updates on 20th Nov, 2019:
 1. I have regenerated the coverage vs num_of_agents curve by averaging over 100 runs. Std. deviation is shown by shaded portion.
 
-![](./Figure/2019-11-20/coverage_vs_numAgents_100_runs.png)
+![](./Figure/2019-11-20/coverage_vs_numAgents.png)
+
+2. As there is no clear sweet point for number of agents, I have plotted another graph, i.e., coverage_per_agent vs num_of_agents. Which shows how much each agent is exploring the grid. Initially the value of this metric is high but the total exploration is low. But around 11 agents, the value of this metric is high as well as the toatal exploration.
+
+![](./Figure/2019-11-20/coverage_per_agent_vs_numAgents.png)
 
 **Traffic Control Problem Formulation Using  RL:**
 * We will create roads in a grid with different probabilities of vehicles taking a turn (Like, a vechicle is more likely to take a highway when it reaches the highway, rather then crossing it).
