@@ -10,7 +10,7 @@
 
 ![](./Figure/2019-11-20/coverage_per_agent_vs_numAgents.png)
 
-**Traffic Control Problem Formulation Using  RL:**
+3. **Traffic Control Problem Formulation Using  RL:**
 * We will create roads in a grid with different probabilities of vehicles taking a turn (Like, a vechicle is more likely to take a highway when it reaches the highway, rather then crossing it).
 * Reward can be movement movement of agent per time unit globally plus a small negative reward for congestion locally.
 * Evaluation Metric: We can compare our model with a round robin solution to check the mobility of the entire grid.
