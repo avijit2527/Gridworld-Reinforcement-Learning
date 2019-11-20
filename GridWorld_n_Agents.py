@@ -330,7 +330,7 @@ for run in range(number_of_runs):
             
      
     print("Run No. %d"%(run))
-    num_agents_array = [2,3,4,5,6,7,8,9,10]
+    num_agents_array = np.arange(2,21)
     for num_agents in num_agents_array:
         beta_array = [1.5] #np.linspace(-20,20,num=50)
         for beta in beta_array:
@@ -343,13 +343,13 @@ for run in range(number_of_runs):
             game.train(100)
             game.saveStates()
             #Creating GIF for visulization
-            '''fp_in = "./Figure/%s/%d/%4.4f/*.png"%(now,num_agents,beta)
-            if not os.path.exists("./GIF/%s/%d"%(now,num_agents)):
-                    os.makedirs("./GIF/%s/%d"%(now,num_agents))
-            fp_out = "./GIF/%s/%d/%4.4f.gif"%(now,num_agents,beta)
+            #fp_in = "./Figure/%s/%d/%4.4f/*.png"%(now,num_agents,beta)
+            #if not os.path.exists("./GIF/%s/%d"%(now,num_agents)):
+            #        os.makedirs("./GIF/%s/%d"%(now,num_agents))
+            #fp_out = "./GIF/%s/%d/%4.4f.gif"%(now,num_agents,beta)
 
-            img, *imgs = [Image.open(f) for f in sorted(glob.glob(fp_in))]
-            img.save(fp=fp_out, format='GIF', append_images=imgs, save_all=True, duration=300, loop=0)'''
+            #img, *imgs = [Image.open(f) for f in sorted(glob.glob(fp_in))]
+            #img.save(fp=fp_out, format='GIF', append_images=imgs, save_all=True, duration=300, loop=0)
        
             
             
@@ -375,10 +375,6 @@ np.save("coverage_vs_numAgents",coverage_array_over_multiple_runs)
 coverage_array_over_multiple_runs = np.load("./coverage_vs_numAgents.npy")
 
 
-#print(coverage_array_over_multiple_runs)
-print(np.mean(coverage_array_over_multiple_runs,axis = 0))
-print(np.std(coverage_array_over_multiple_runs,axis = 0))
-
 mean_coverage_array = np.mean(coverage_array_over_multiple_runs, axis = 0)
 std_coverage_array = np.std(coverage_array_over_multiple_runs,axis = 0)
 
@@ -389,11 +385,33 @@ ax.fill_between(mean_coverage_array.T[0],mean_coverage_array.T[1] - std_coverage
 plt.title("Coverage vs Num_of_Agents for %d Runs"%(number_of_runs))
 plt.xlabel("Num of Agents")
 plt.ylabel("Coverage")
-#plt.show()  
 plt.savefig("./Figure/%s/coverage_vs_numAgents.png"%(now))
 plt.close()
-            
-            
+   
+   
+#COVERAGE PER AGENT   
+coverage_array_per_agent_over_multiple_runs = coverage_array_over_multiple_runs.copy()
+for p,i in  enumerate(coverage_array_per_agent_over_multiple_runs):
+    for q,j in enumerate(i):
+        print(j[0],j[1]) 
+        coverage_array_per_agent_over_multiple_runs[p][q][1] = (coverage_array_per_agent_over_multiple_runs[p][q][1]/coverage_array_per_agent_over_multiple_runs[p][q][0])
+
+
+mean_coverage_per_agent_array = np.mean(coverage_array_per_agent_over_multiple_runs, axis = 0)
+std_coverage_per_agent_array = np.std(coverage_array_per_agent_over_multiple_runs,axis = 0)
+   
+   
+   
+#Plotting coverage per agent vs number of agents   
+fig, ax = plt.subplots()            
+ax.plot(mean_coverage_per_agent_array.T[0],mean_coverage_per_agent_array.T[1], c='r')
+ax.fill_between(mean_coverage_per_agent_array.T[0],mean_coverage_per_agent_array.T[1] - std_coverage_per_agent_array.T[1],mean_coverage_per_agent_array.T[1] + std_coverage_per_agent_array.T[1],alpha = 0.1)
+plt.title("Coverage per Agent vs Num_of_Agents for %d Runs"%(number_of_runs))
+plt.xlabel("Num of Agents")
+plt.ylabel("Coverage per Agent")
+plt.savefig("./Figure/%s/coverage_per_agent_vs_numAgents.png"%(now))
+plt.close()
+                        
             
             
             
