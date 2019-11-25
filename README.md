@@ -2,6 +2,19 @@
 ## Updates regarding project
 
 ### Updates on 20th Nov, 2019:
+1. I have plotted a graph alpha vs coverage. Where alpha is learning rate in the following equation.
+
+![](./Figure/Q_Learning.png)
+
+2. All the figures for different number of agents can be found under ./Figure/2019-11-23/ . I have shown the graph for 11 agents.
+
+![](./Figure/2019-11-23/11/coverage_vs_alpha.png)
+
+3.  Alpha = 0 means that no update is happening and the agent is moving as per its initial policy. And alpha = 1 means that only the recent update is considered. Our initial policy is a random policy. And surprisingly for any number of agent(2-12), the RL algorithm is doing worse than random.
+
+
+
+### Updates on 20th Nov, 2019:
 1. I have regenerated the coverage vs num_of_agents curve by averaging over 100 runs. Std. deviation is shown by shaded portion.
 
 ![](./Figure/2019-11-20/coverage_vs_numAgents.png)
