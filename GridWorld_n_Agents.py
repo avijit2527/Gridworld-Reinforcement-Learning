@@ -251,9 +251,9 @@ class RunAgents:
                 agent = 0
                 episode_length = 0
                 while (not done) and episode_length < self.max_iter :
-                    #if i%100 == 99:
+                    if i%100 == 99:
                         #print(episode_length)
-                        #self.showGrid(self.grid,episode_length)
+                        self.showGrid(self.grid,episode_length)
                         #time.sleep(1)
                     episode_length += 1
                     move = self.agents[agent].epsilon_greedy(self.find_location(agent), self.possible_moves(agent))
@@ -276,7 +276,7 @@ class RunAgents:
         self.mat = ax.matshow(grid)
         plt.colorbar(self.mat)
         for (i, j), z in np.ndenumerate(grid):
-            ax.text(j, i, ' ', ha='center', va='center', color = 'g',
+            ax.text(j, i, '', ha='center', va='center', color = 'g',
                     bbox=dict(boxstyle='round', facecolor='white', edgecolor='0.4'),size = 11)        
 
 
@@ -316,7 +316,7 @@ class RunAgents:
 
 x = datetime.datetime.now()
 now = str(x)[0:10]            
-number_of_runs = 100
+number_of_runs = 300
 
 
 
@@ -330,26 +330,26 @@ for run in range(number_of_runs):
             
      
     print("Run No. %d"%(run))
-    num_agents_array = np.arange(2,21)
+    num_agents_array = np.arange(10,21)       #Number of agents in the grid
     for num_agents in num_agents_array:
         beta_array = [1.5] #np.linspace(-20,20,num=50)
         for beta in beta_array:
             print(beta,num_agents)
             agents = np.empty([num_agents],dtype = GridWorld) 
-            game = RunAgents(10,10,num_agents,True,beta)   
+            game = RunAgents(100,100,num_agents,True,beta)   
             for i in range(num_agents):
                 agents[i] = GridWorld(epsilon = 0.2)
             game.startTraining(agents)
             game.train(100)
             game.saveStates()
             #Creating GIF for visulization
-            #fp_in = "./Figure/%s/%d/%4.4f/*.png"%(now,num_agents,beta)
-            #if not os.path.exists("./GIF/%s/%d"%(now,num_agents)):
-            #        os.makedirs("./GIF/%s/%d"%(now,num_agents))
-            #fp_out = "./GIF/%s/%d/%4.4f.gif"%(now,num_agents,beta)
+            fp_in = "./Figure/%s/%d/%4.4f/*.png"%(now,num_agents,beta)
+            if not os.path.exists("./GIF/%s/%d"%(now,num_agents)):
+                    os.makedirs("./GIF/%s/%d"%(now,num_agents))
+            fp_out = "./GIF/%s/%d/%4.4f.gif"%(now,num_agents,beta)
 
-            #img, *imgs = [Image.open(f) for f in sorted(glob.glob(fp_in))]
-            #img.save(fp=fp_out, format='GIF', append_images=imgs, save_all=True, duration=300, loop=0)
+            img, *imgs = [Image.open(f) for f in sorted(glob.glob(fp_in))]
+            img.save(fp=fp_out, format='GIF', append_images=imgs, save_all=True, duration=300, loop=0)
        
             
             
@@ -362,6 +362,8 @@ for run in range(number_of_runs):
     plt.xlabel("Num of Agents")
     plt.ylabel("Coverage")
     #plt.show()  
+    if not os.path.exists("./Figure/%s"%(now)):
+        os.makedirs("./Figure/%s"%(now))
     plt.savefig("./Figure/%s/%2.2d.png"%(now,run))
     plt.close()          
             
@@ -406,7 +408,7 @@ std_coverage_per_agent_array = np.std(coverage_array_per_agent_over_multiple_run
 fig, ax = plt.subplots()            
 ax.plot(mean_coverage_per_agent_array.T[0],mean_coverage_per_agent_array.T[1], c='r')
 ax.fill_between(mean_coverage_per_agent_array.T[0],mean_coverage_per_agent_array.T[1] - std_coverage_per_agent_array.T[1],mean_coverage_per_agent_array.T[1] + std_coverage_per_agent_array.T[1],alpha = 0.1)
-plt.title("Coverage per Agent vs Num_of_Agents for %d Runs"%(number_of_runs))
+plt.title("Coverage_per_Agent vs Num_of_Agents for %d Runs"%(number_of_runs))
 plt.xlabel("Num of Agents")
 plt.ylabel("Coverage per Agent")
 plt.savefig("./Figure/%s/coverage_per_agent_vs_numAgents.png"%(now))
