@@ -1,7 +1,7 @@
 # Gridworld-Reinforcement-Learning
 ## Updates regarding project
 
-### Updates on 20th Nov, 2019:
+### Updates on 25th Nov, 2019:
 1. I have plotted a graph alpha vs coverage. Where alpha is learning rate in the following equation.
 
 ![](./Figure/Q_Learning.png)
