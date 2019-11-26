@@ -5,7 +5,7 @@
 ### Updates on 26th Nov, 2019:
 Normal X-scale             |  Log x-scale
 :-------------------------:|:-------------------------:
-![](./Figure/2019-11-25/coverage_vs_k_by_n.png = 20*20)  |  ![](./Figure/2019-11-25/coverage_vs_k_by_n_logScale.png = 20*20)
+![](./Figure/2019-11-25/coverage_vs_k_by_n.png)  |  ![](./Figure/2019-11-25/coverage_vs_k_by_n_logScale.png)
 
 
 
