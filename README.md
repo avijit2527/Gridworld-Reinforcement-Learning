@@ -3,7 +3,9 @@
 
 
 ### Updates on 26th Nov, 2019:
-Normal X-scale             |  Log x-scale
+1. I have plotted coverage vs k/n for k = 11 and n = (5*5) to (50 * 50). I have plotted the values in both linear and log scale.
+
+Linear x-scale             |  Log x-scale
 :-------------------------:|:-------------------------:
 ![](./Figure/2019-11-25/coverage_vs_k_by_n.png)  |  ![](./Figure/2019-11-25/coverage_vs_k_by_n_logScale.png)
 
