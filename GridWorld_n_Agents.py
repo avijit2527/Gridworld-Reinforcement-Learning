@@ -120,14 +120,17 @@ class RunAgents:
         
         self.done = False
         self.agents = np.empty([num_agents],dtype = GridWorld)
-        self.reward_states = [[3,3],[3,4]]
-        self.max_iter = 500
+        self.reward_states = {}
+        self.max_iter = 1000
         
         x = datetime.datetime.now()
         self.time = str(x)[0:10]
         
         self.visited_states = []
         self.k_coverage = 50 *   self.num_agents     #last k steps to calculate coverage
+        self.all_states = self.createAllPossibleIndex(width,height)
+        self.reward_frequncy = 0.2/self.num_agents
+        self.reward_parameter = 11
             
       
       
@@ -143,7 +146,7 @@ class RunAgents:
     def reset(self):
         if(self.training):
             self.grid = -1 * np.ones(shape=(self.width,self.height), dtype=int)
-            indices = random.sample(self.createAllPossibleIndex(self.width,self.height),self.num_agents)
+            indices = random.sample(self.all_states,self.num_agents)
             for i in range(self.num_agents):
                 x = indices[i][0]
                 y = indices[i][1]
@@ -159,13 +162,17 @@ class RunAgents:
         for x in range(self.num_agents):
             distance = self.proximity(ch,x) 
             proximity_reward += (math.exp(self.beta * distance) - 1) # - 1 for own distance exp(0)
-        #print(proximity_reward)
-        i = 100
-        for x in self.reward_states:
-            i += 1
-            if location[0] == x[0] and location[1] == x[1]:
-                proximity_reward = 100 + proximity_reward   
-        return proximity_reward , False 
+            
+        instant_reward = 0   
+        for y in self.reward_states.keys():
+            distance = self.find_reward_state_distance(np.array(y),ch) 
+            instant_reward += 1000 * self.reward_states[y]  * math.exp(-self.beta * distance) 
+            #print("Distance = %2.2f"%(distance))
+            #print(self.reward_states[y]  * math.exp(-self.beta * distance) )
+            
+            
+        #print("Proximity Reward = %2.2f Instant Reward = %2.2f"%(proximity_reward,instant_reward))  
+        return proximity_reward + instant_reward , False 
             
         
         
@@ -180,6 +187,13 @@ class RunAgents:
 
     def proximity(self,ch1, ch2):
         location_ch_1 = self.find_location(ch1)
+        location_ch_2 = self.find_location(ch2)
+        
+        return  np.linalg.norm(location_ch_1 - location_ch_2)
+        
+        
+        
+    def find_reward_state_distance(self, location_ch_1, ch2):
         location_ch_2 = self.find_location(ch2)
         
         return  np.linalg.norm(location_ch_1 - location_ch_2)
@@ -251,34 +265,48 @@ class RunAgents:
                 agent = 0
                 episode_length = 0
                 while (not done) and episode_length < self.max_iter :
-                    #if i%100 == 99:
-                        #print(episode_length)
-                        #self.showGrid(self.grid,episode_length)
-                        #time.sleep(1)
                     episode_length += 1
+                    if(random.random() < self.reward_frequncy):
+                        temp_reward_state = random.sample(self.all_states,1)[0]
+                        self.reward_states[tuple(temp_reward_state)] = self.reward_parameter
+                    
                     move = self.agents[agent].epsilon_greedy(self.find_location(agent), self.possible_moves(agent))
                     reward, done = self.step(agent,move)
                     self.agents[agent].updateQ(reward, self.find_location(agent), self.possible_moves(agent))
                     agent = (agent + 1) % self.num_agents
-                    
+                    if i%100 == 99:
+                        #print(episode_length)
+                        self.showGrid(self.grid,episode_length,reward)
+                        #time.sleep(1)
+                        
+                    for reward_state in self.reward_states.keys():
+                        self.reward_states[reward_state] -= (1/self.num_agents)
+                        
+                    delete = [key for key in self.reward_states if self.reward_states[key] <= 0]     
+                   
+                    for key in delete: del self.reward_states[key] 
+            
+                    #print(self.reward_states)     
+                       
             coverage = self.calculate_coverage(self.k_coverage)   
-            #coverage_array.append([self.num_agents,coverage]) 
             return coverage                
                     
                     
                     
     
-    def showGrid(self, grid_main,iteration):
+    def showGrid(self, grid_main,iteration,reward):
         grid = grid_main.copy()
 
         fig,ax = plt.subplots()
+        ax.title.set_text("Reward: %2.2f"%(reward))
         ax.axes.get_xaxis().set_visible(False)
         ax.axes.get_yaxis().set_visible(False)
         self.mat = ax.matshow(grid)
         plt.colorbar(self.mat)
         for (i, j), z in np.ndenumerate(grid):
-            ax.text(j, i, '', ha='center', va='center', color = 'g',
-                    bbox=dict(boxstyle='round', facecolor='white', edgecolor='0.4'),size = 11)        
+            for reward_state in self.reward_states.keys():
+                if reward_state[0] == i and reward_state[1] == j:
+                    ax.text(j, i, ' ', ha='center', va='center', color = 'g', bbox=dict(boxstyle='round', facecolor='white', edgecolor='0.4'),size = self.reward_states[reward_state])        
 
 
         if not os.path.exists("./Figure/%s/%d/%4.4f"%(self.time,self.num_agents,self.beta)):
@@ -320,7 +348,7 @@ now = str(x)[0:10]
 
 
            
-number_of_runs = 20
+number_of_runs = 1
 coverage_array_over_multiple_runs = []
 for run in range(number_of_runs):
                     
@@ -330,9 +358,9 @@ for run in range(number_of_runs):
             
      
     print("Run No. %d"%(run))
-    num_agents_array = np.arange(2,11)       #Number of agents in the grid
+    num_agents_array = np.arange(2,12)       #Number of agents in the grid
     for num_agents in num_agents_array:
-        beta_array = [1.5] #np.linspace(-20,20,num=50)
+        beta_array = [0.5] #np.linspace(-20,20,num=50)
         for beta in beta_array:
             print("Run = %d, Beta: %2.2f, Num Agents: %2.2d"%(run, beta, num_agents))
             agents = np.empty([num_agents],dtype = GridWorld) 
@@ -343,18 +371,19 @@ for run in range(number_of_runs):
             coverage = game.train(100)
             coverage_array.append([num_agents,coverage])
             game.saveStates()
+            
             #Creating GIF for visulization
-            #fp_in = "./Figure/%s/%d/%4.4f/*.png"%(now,num_agents,beta)
-            #if not os.path.exists("./GIF/%s/%d"%(now,num_agents)):
-                    #os.makedirs("./GIF/%s/%d"%(now,num_agents))
-            #fp_out = "./GIF/%s/%d/%4.4f.gif"%(now,num_agents,beta)
+            fp_in = "./Figure/%s/%d/%4.4f/*.png"%(now,num_agents,beta)
+            if not os.path.exists("./GIF/%s/%d"%(now,num_agents)):
+                os.makedirs("./GIF/%s/%d"%(now,num_agents))
+            fp_out = "./GIF/%s/%d/%4.4f.gif"%(now,num_agents,beta)
 
-            #img, *imgs = [Image.open(f) for f in sorted(glob.glob(fp_in))]
-            #img.save(fp=fp_out, format='GIF', append_images=imgs, save_all=True, duration=300, loop=0)
+            img, *imgs = [Image.open(f) for f in sorted(glob.glob(fp_in))]
+            img.save(fp=fp_out, format='GIF', append_images=imgs, save_all=True, duration=300, loop=0)
        
             
             
-    coverage_array_over_multiple_runs.append(coverage_array)        
+'''    coverage_array_over_multiple_runs.append(coverage_array)        
     #Plotting coverage vs number of agents
     coverage_array = np.array(coverage_array)
     fig, ax = plt.subplots()
@@ -413,7 +442,7 @@ plt.title("Coverage_per_Agent vs Num_of_Agents for %d Runs"%(number_of_runs))
 plt.xlabel("Num of Agents")
 plt.ylabel("Coverage per Agent")
 plt.savefig("./Figure/%s/coverage_per_agent_vs_numAgents.png"%(now))
-plt.close()
+plt.close()'''
                         
             
             
