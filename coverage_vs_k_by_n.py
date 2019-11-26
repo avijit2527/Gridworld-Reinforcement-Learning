@@ -16,7 +16,8 @@ import datetime
 import glob
 from PIL import Image
 
-
+import matplotlib 
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from matplotlib import style
@@ -292,7 +293,7 @@ class RunAgents:
          last_k = np.array(self.visited_states[-k:])
          last_k_T = last_k.T
          last_k = list(zip(last_k_T[0],last_k_T[1]))    #from 2d array to 1d array of tuple
-         print(k,last_k)
+         #print(k,last_k)
          coverage = len(set(last_k))
          return coverage/(self.width*self.height)
      
@@ -320,28 +321,28 @@ now = str(x)[0:10]
 
 
            
-number_of_runs = 20
+number_of_runs = 100
 coverage_array_over_multiple_runs = []
+
 for run in range(number_of_runs):
                     
 
     coverage_array = []            
-            
-            
-     
+
     print("Run No. %d"%(run))
-    num_agents_array = np.arange(2,11)       #Number of agents in the grid
-    for num_agents in num_agents_array:
+    gridsize_array = np.arange(5,50,2,dtype=int)       #Number of agents in the grid
+    num_agents = 11
+    for gridsize in gridsize_array:
         beta_array = [1.5] #np.linspace(-20,20,num=50)
         for beta in beta_array:
-            print("Run = %d, Beta: %2.2f, Num Agents: %2.2d"%(run, beta, num_agents))
+            print("Run = %d, Beta: %2.2f, Num Agents: %2.2d, gridsize: (%2.2d * %2.2d) "%(run, beta, num_agents,gridsize,gridsize))
             agents = np.empty([num_agents],dtype = GridWorld) 
-            game = RunAgents(10,10,num_agents,True,beta)   
+            game = RunAgents(gridsize,gridsize,num_agents,True,beta)   
             for i in range(num_agents):
                 agents[i] = GridWorld(epsilon = 0.2)
             game.startTraining(agents)
             coverage = game.train(100)
-            coverage_array.append([num_agents,coverage])
+            coverage_array.append([num_agents/(gridsize*gridsize),coverage])
             game.saveStates()
             #Creating GIF for visulization
             #fp_in = "./Figure/%s/%d/%4.4f/*.png"%(now,num_agents,beta)
@@ -359,23 +360,23 @@ for run in range(number_of_runs):
     coverage_array = np.array(coverage_array)
     fig, ax = plt.subplots()
     ax.plot(coverage_array.T[0],coverage_array.T[1])
-    plt.title("Coverage vs Num_of_Agents")
-    plt.xlabel("Num of Agents")
+    plt.title("Coverage vs k/n")
+    plt.xlabel("k/n")
     plt.ylabel("Coverage")
     #plt.show()  
     if not os.path.exists("./Figure/%s"%(now)):
         os.makedirs("./Figure/%s"%(now))
-    plt.savefig("./Figure/%s/%2.2d.png"%(now,run))
+    plt.savefig("./Figure/%s/run_%2.2d.png"%(now,run))
     plt.close()          
             
     
 
 coverage_array_over_multiple_runs = np.array(coverage_array_over_multiple_runs)   
-np.save("coverage_vs_numAgents",coverage_array_over_multiple_runs)  
+np.save("coverage_vs_k_by_n",coverage_array_over_multiple_runs)  
 
 
 
-coverage_array_over_multiple_runs = np.load("./coverage_vs_numAgents.npy")
+coverage_array_over_multiple_runs = np.load("./coverage_vs_k_by_n.npy")
 
 
 mean_coverage_array = np.mean(coverage_array_over_multiple_runs, axis = 0)
@@ -385,37 +386,10 @@ std_coverage_array = np.std(coverage_array_over_multiple_runs,axis = 0)
 fig, ax = plt.subplots()
 ax.plot(mean_coverage_array.T[0],mean_coverage_array.T[1], c='r')
 ax.fill_between(mean_coverage_array.T[0],mean_coverage_array.T[1] - std_coverage_array.T[1],mean_coverage_array.T[1] + std_coverage_array.T[1],alpha = 0.1)
-plt.title("Coverage vs Num_of_Agents for %d Runs"%(number_of_runs))
-plt.xlabel("Num of Agents")
+plt.title("Coverage vs k/n for %d Runs"%(number_of_runs))
+plt.xlabel("k/n")
 plt.ylabel("Coverage")
-plt.savefig("./Figure/%s/coverage_vs_numAgents.png"%(now))
+plt.savefig("./Figure/%s/coverage_vs_k_by_n.png"%(now))
 plt.close()
    
-   
-#COVERAGE PER AGENT   
-coverage_array_per_agent_over_multiple_runs = coverage_array_over_multiple_runs.copy()
-for p,i in  enumerate(coverage_array_per_agent_over_multiple_runs):
-    for q,j in enumerate(i):
-        print(j[0],j[1]) 
-        coverage_array_per_agent_over_multiple_runs[p][q][1] = (coverage_array_per_agent_over_multiple_runs[p][q][1]/coverage_array_per_agent_over_multiple_runs[p][q][0])
 
-
-mean_coverage_per_agent_array = np.mean(coverage_array_per_agent_over_multiple_runs, axis = 0)
-std_coverage_per_agent_array = np.std(coverage_array_per_agent_over_multiple_runs,axis = 0)
-   
-   
-   
-#Plotting coverage per agent vs number of agents   
-fig, ax = plt.subplots()            
-ax.plot(mean_coverage_per_agent_array.T[0],mean_coverage_per_agent_array.T[1], c='r')
-ax.fill_between(mean_coverage_per_agent_array.T[0],mean_coverage_per_agent_array.T[1] - std_coverage_per_agent_array.T[1],mean_coverage_per_agent_array.T[1] + std_coverage_per_agent_array.T[1],alpha = 0.1)
-plt.title("Coverage_per_Agent vs Num_of_Agents for %d Runs"%(number_of_runs))
-plt.xlabel("Num of Agents")
-plt.ylabel("Coverage per Agent")
-plt.savefig("./Figure/%s/coverage_per_agent_vs_numAgents.png"%(now))
-plt.close()
-                        
-            
-            
-            
-            

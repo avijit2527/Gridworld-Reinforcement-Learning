@@ -1,6 +1,14 @@
 # Gridworld-Reinforcement-Learning
 ## Updates regarding project
 
+
+### Updates on 26th Nov, 2019:
+Normal X-scale             |  Log x-scale
+:-------------------------:|:-------------------------:
+![](./Figure/2019-11-25/coverage_vs_k_by_n.png = 20*20)  |  ![](./Figure/2019-11-25/coverage_vs_k_by_n_logScale.png = 20*20)
+
+
+
 ### Updates on 25th Nov, 2019:
 1. I have plotted a graph alpha vs coverage. Where alpha is learning rate in the following equation.
 
