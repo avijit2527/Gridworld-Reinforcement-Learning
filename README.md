@@ -1,6 +1,15 @@
 # Gridworld-Reinforcement-Learning
 ## Updates regarding project
 
+### Updates on 27th Nov, 2019:
+1. I have created reward which drops off with time and distance from the agent, i.e, with time the random reward goes to zero and nearer agents gets more reward.
+2. Reward: proximity_reward + instant_reward. proximity reward as before and instant_reward = 1000 * reward_parameter * exp(-beta * distance) where reward parameter decayes with time. Reward states are getting generated randomly.
+3. **Observation**: Sometimes an agent is staying in a place for a long time, near an instant reward state and not moving in any direction. May be because other action has less Q-values associated with it and it is not able to learn that moving in the direction of reward state will give it higher rewards. 
+4. Below is behaviour of when number of agents = 11. Rest can be found at ./GIF/2019-11-26/. White boxes shows reward states and their strengths.
+![](./GIF/2019-11-26/11/0.5000.gif)
+
+
+
 
 ### Updates on 26th Nov, 2019:
 1. I have plotted coverage vs k/n for k = 11 and n = (5*5) to (50 * 50). I have plotted the values in both linear and log scale.
