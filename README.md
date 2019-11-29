@@ -1,6 +1,18 @@
 # Gridworld-Reinforcement-Learning
 ## Updates regarding project
 
+
+### Updates on 29th Nov, 2019:
+1. I have changed the reward a little bit and nice behaviour is emerging. 
+2. Reward is available only at certain states and those are decaying with time. Rewards emerge randomly at some specific states (I have taken number of reward states = number of agents).
+3. Total_Reward = Proximity_Reward + Instant_Reward. Proximity_Reward is calculated from distance to other agents as before and Instant_Reward is awarded when an agent reaches a reward state and reward is available at that point in time.
+4. **Observation**: The agents are maintaining distance between them and they are hovering around the reward states. So, there is always some agent available near the reward states and total state exploration is also high.
+5. The behavior of the agents can be found at ./GIF/2019-11-29/ and ./Figure/2019-11-29/
+![](./GIF/2019-11-29/8/0.5000.gif)
+
+
+
+
 ### Updates on 27th Nov, 2019:
 1. I have created reward which drops off with time and distance from the agent, i.e, with time the random reward goes to zero and nearer agents gets more reward.
 2. Reward: proximity_reward + instant_reward. proximity reward as before and instant_reward = 1000 * reward_parameter * exp(-beta * distance) where reward parameter decayes with time. Reward states are getting generated randomly.
@@ -103,7 +115,7 @@ Linear x-scale             |  Log x-scale
 ### Updates on 26th Sept, 2019:
 
 **Using proximity as state representation**
-1. When I did not give proximity reward, agents were exploring the entire grid and one agent was roaming around the awerd states.
+1. When I did not give proximity reward, agents were exploring the entire grid and one agent was roaming around the award states.
 2. When I gave reward as -distance, the agents were stuck at both corners near starting points and never crossing each other. They are also showing signs of maintaing distance.
 
 Colour represents the direction of the max Q-value(i.e action corresponding to the maximum Q value). 

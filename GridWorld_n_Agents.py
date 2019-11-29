@@ -16,7 +16,8 @@ import datetime
 import glob
 from PIL import Image
 
-
+import matplotlib
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from matplotlib import style
@@ -120,6 +121,7 @@ class RunAgents:
         
         self.done = False
         self.agents = np.empty([num_agents],dtype = GridWorld)
+        self.all_reward_states = list(np.load("./Reward_States/reward_states_agent_%d.npy"%(self.num_agents)))
         self.reward_states = {}
         self.max_iter = 1000
         
@@ -129,8 +131,13 @@ class RunAgents:
         self.visited_states = []
         self.k_coverage = 50 *   self.num_agents     #last k steps to calculate coverage
         self.all_states = self.createAllPossibleIndex(width,height)
-        self.reward_frequncy = 0.2/self.num_agents
+        self.reward_frequncy = 0.01 * self.num_agents
         self.reward_parameter = 11
+        #np.save("./Reward_States/reward_states_agent_%d"%(self.num_agents),random.sample(self.all_states,self.num_agents))
+        
+        print(self.all_reward_states,self.all_states)
+        
+        
             
       
       
@@ -146,6 +153,7 @@ class RunAgents:
     def reset(self):
         if(self.training):
             self.grid = -1 * np.ones(shape=(self.width,self.height), dtype=int)
+            self.reward_states = {}
             indices = random.sample(self.all_states,self.num_agents)
             for i in range(self.num_agents):
                 x = indices[i][0]
@@ -166,13 +174,14 @@ class RunAgents:
         instant_reward = 0   
         for y in self.reward_states.keys():
             distance = self.find_reward_state_distance(np.array(y),ch) 
-            instant_reward += 1000 * self.reward_states[y]  * math.exp(-self.beta * distance) 
+            if y[0] == location[0] and y[1] == location[1]:
+                instant_reward += 1000 * self.reward_states[y]  #* math.exp(-self.beta * distance) 
             #print("Distance = %2.2f"%(distance))
             #print(self.reward_states[y]  * math.exp(-self.beta * distance) )
             
             
-        #print("Proximity Reward = %2.2f Instant Reward = %2.2f"%(proximity_reward,instant_reward))  
-        return proximity_reward + instant_reward , False 
+        print("Proximity Reward = %2.2f Instant Reward = %2.2f"%(proximity_reward,instant_reward))  
+        return proximity_reward + instant_reward  , False 
             
         
         
@@ -267,7 +276,7 @@ class RunAgents:
                 while (not done) and episode_length < self.max_iter :
                     episode_length += 1
                     if(random.random() < self.reward_frequncy):
-                        temp_reward_state = random.sample(self.all_states,1)[0]
+                        temp_reward_state = random.sample(self.all_reward_states,1)[0]
                         self.reward_states[tuple(temp_reward_state)] = self.reward_parameter
                     
                     move = self.agents[agent].epsilon_greedy(self.find_location(agent), self.possible_moves(agent))
@@ -298,7 +307,7 @@ class RunAgents:
         grid = grid_main.copy()
 
         fig,ax = plt.subplots()
-        ax.title.set_text("Reward: %2.2f"%(reward))
+        ax.title.set_text("Reward: %4.4f"%(reward))
         ax.axes.get_xaxis().set_visible(False)
         ax.axes.get_yaxis().set_visible(False)
         self.mat = ax.matshow(grid)
@@ -306,7 +315,9 @@ class RunAgents:
         for (i, j), z in np.ndenumerate(grid):
             for reward_state in self.reward_states.keys():
                 if reward_state[0] == i and reward_state[1] == j:
-                    ax.text(j, i, ' ', ha='center', va='center', color = 'g', bbox=dict(boxstyle='round', facecolor='white', edgecolor='0.4'),size = self.reward_states[reward_state])        
+                    ax.text(j, i, ' ', ha='center', va='center', color = 'g', bbox=dict(boxstyle='round', facecolor='white', edgecolor='0.4'),size = self.reward_states[reward_state]) 
+            if z != -1:
+                ax.text(j, i, str(z), ha='center', va='center', color = 'g', bbox=dict(boxstyle='round', facecolor='white', edgecolor='0.4'),size = 7)       
 
 
         if not os.path.exists("./Figure/%s/%d/%4.4f"%(self.time,self.num_agents,self.beta)):
@@ -320,7 +331,7 @@ class RunAgents:
          last_k = np.array(self.visited_states[-k:])
          last_k_T = last_k.T
          last_k = list(zip(last_k_T[0],last_k_T[1]))    #from 2d array to 1d array of tuple
-         print(k,last_k)
+         #print(k,last_k)
          coverage = len(set(last_k))
          return coverage/(self.width*self.height)
      
