@@ -135,7 +135,7 @@ class RunAgents:
         self.reward_parameter = 11
         #np.save("./Reward_States/reward_states_agent_%d"%(self.num_agents),random.sample(self.all_states,self.num_agents))
         
-        print(self.all_reward_states,self.all_states)
+        #print(self.all_reward_states,self.all_states)
         
         
             
@@ -180,7 +180,7 @@ class RunAgents:
             #print(self.reward_states[y]  * math.exp(-self.beta * distance) )
             
             
-        print("Proximity Reward = %2.2f Instant Reward = %2.2f"%(proximity_reward,instant_reward))  
+        #print("Proximity Reward = %2.2f Instant Reward = %2.2f"%(proximity_reward,instant_reward))  
         return proximity_reward + instant_reward  , False 
             
         
@@ -242,12 +242,12 @@ class RunAgents:
         if move == 'r':
             new_location_y += 1
 
-        
+        step_penalty = -50
         self.grid[new_location_x][new_location_y] = agent
         self.visited_states.append([new_location_x,new_location_y])
         reward, done = self.evaluate(agent)
 
-        return reward, done
+        return reward + step_penalty, done
             
             
             
@@ -359,7 +359,7 @@ now = str(x)[0:10]
 
 
            
-number_of_runs = 1
+number_of_runs = 2
 coverage_array_over_multiple_runs = []
 for run in range(number_of_runs):
                     
@@ -394,7 +394,7 @@ for run in range(number_of_runs):
        
             
             
-'''    coverage_array_over_multiple_runs.append(coverage_array)        
+    coverage_array_over_multiple_runs.append(coverage_array)        
     #Plotting coverage vs number of agents
     coverage_array = np.array(coverage_array)
     fig, ax = plt.subplots()
@@ -453,7 +453,7 @@ plt.title("Coverage_per_Agent vs Num_of_Agents for %d Runs"%(number_of_runs))
 plt.xlabel("Num of Agents")
 plt.ylabel("Coverage per Agent")
 plt.savefig("./Figure/%s/coverage_per_agent_vs_numAgents.png"%(now))
-plt.close()'''
+plt.close()
                         
             
             

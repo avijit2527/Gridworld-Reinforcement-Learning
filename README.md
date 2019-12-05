@@ -2,6 +2,14 @@
 ## Updates regarding project
 
 
+### Updates on 05th Dec, 2019:
+1. I have done two experiments. One for visualizing the average distance of the nearest agent from the reward states and the other is for visualizing the total coverage, under different types of reward.
+
+Average_Distance_from_Reward_States vs Num_of_Agents            |  Coverage vs Num_of_Agents
+:-------------------------:|:-------------------------:
+![](./Figure/2019-12-05/Average_Distance_from_Reward_States_vs_numAgents_proximity_instant_reward.png)  |  ![](./Figure/2019-12-05/coverage_vs_numAgents.png)
+
+
 ### Updates on 29th Nov, 2019:
 1. I have changed the reward a little bit and nice behaviour is emerging. 
 2. Reward is available only at certain states and those are decaying with time. Rewards emerge randomly at some specific states (I have taken number of reward states = number of agents).
