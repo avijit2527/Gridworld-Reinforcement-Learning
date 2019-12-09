@@ -2,6 +2,12 @@
 ## Updates regarding project
 
 
+### Updates on 09th Dec, 2019:
+1. I have plotted the data for car movement on Kanpur map. There are total of 105 cars. All the movements can be found under ./UP100/Figure/2019-12-09/
+![](./UP100/Figure/2019-12-09/Agent_KNC0455.png)
+
+
+
 ### Updates on 05th Dec, 2019:
 1. I have done two experiments. One for visualizing the average distance of the nearest agent from the reward states and the other is for visualizing the total coverage, under different types of reward.
 
