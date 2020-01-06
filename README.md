@@ -9,7 +9,7 @@
 3. **Ideas**: 
   *  Can we randomly explore the state space for some amount of time before using the learned model?
   *  Can we use some smart initialization so that our agents gets initialized near the crime location? 
-4. Crime Frequency Visualization:
+4. **Crime Frequency Visualization**:
   ![](./UP100/Figure/2020-01-04/CrimeFrequency.png)
 
 
