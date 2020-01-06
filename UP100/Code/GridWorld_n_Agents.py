@@ -125,7 +125,7 @@ class RunAgents:
         self.agents = np.empty([num_agents],dtype = GridWorld)
         self.all_reward_states = list(np.load("./location_in_grid.npy"))
         self.reward_states = {}
-        self.max_iter = 10000
+        self.max_iter = 5000
         
         x = datetime.datetime.now()
         self.time = str(x)[0:10]
@@ -411,54 +411,4 @@ for run in range(number_of_runs):
     plt.savefig("../Figure/%s/%2.2d.png"%(now,run))
     plt.close()          
             
-    
-
-coverage_array_over_multiple_runs = np.array(coverage_array_over_multiple_runs)   
-np.save("coverage_vs_numAgents",coverage_array_over_multiple_runs)  
-
-
-
-coverage_array_over_multiple_runs = np.load("./coverage_vs_numAgents.npy")
-
-
-mean_coverage_array = np.mean(coverage_array_over_multiple_runs, axis = 0)
-std_coverage_array = np.std(coverage_array_over_multiple_runs,axis = 0)
-
-#Plotting coverage vs number of agents
-fig, ax = plt.subplots()
-ax.plot(mean_coverage_array.T[0],mean_coverage_array.T[1], c='r')
-ax.fill_between(mean_coverage_array.T[0],mean_coverage_array.T[1] - std_coverage_array.T[1],mean_coverage_array.T[1] + std_coverage_array.T[1],alpha = 0.1)
-plt.title("Coverage vs Num_of_Agents for %d Runs"%(number_of_runs))
-plt.xlabel("Num of Agents")
-plt.ylabel("Coverage")
-plt.savefig("../Figure/%s/coverage_vs_numAgents.png"%(now))
-plt.close()
-   
-   
-#COVERAGE PER AGENT   
-coverage_array_per_agent_over_multiple_runs = coverage_array_over_multiple_runs.copy()
-for p,i in  enumerate(coverage_array_per_agent_over_multiple_runs):
-    for q,j in enumerate(i):
-        print(j[0],j[1]) 
-        coverage_array_per_agent_over_multiple_runs[p][q][1] = (coverage_array_per_agent_over_multiple_runs[p][q][1]/coverage_array_per_agent_over_multiple_runs[p][q][0])
-
-
-mean_coverage_per_agent_array = np.mean(coverage_array_per_agent_over_multiple_runs, axis = 0)
-std_coverage_per_agent_array = np.std(coverage_array_per_agent_over_multiple_runs,axis = 0)
-   
-   
-   
-#Plotting coverage per agent vs number of agents   
-fig, ax = plt.subplots()            
-ax.plot(mean_coverage_per_agent_array.T[0],mean_coverage_per_agent_array.T[1], c='r')
-ax.fill_between(mean_coverage_per_agent_array.T[0],mean_coverage_per_agent_array.T[1] - std_coverage_per_agent_array.T[1],mean_coverage_per_agent_array.T[1] + std_coverage_per_agent_array.T[1],alpha = 0.1)
-plt.title("Coverage_per_Agent vs Num_of_Agents for %d Runs"%(number_of_runs))
-plt.xlabel("Num of Agents")
-plt.ylabel("Coverage per Agent")
-plt.savefig("../Figure/%s/coverage_per_agent_vs_numAgents.png"%(now))
-plt.close()
-                        
-            
-            
-            
-            
+  

@@ -6,10 +6,11 @@
 ### Updates on 6th Jan, 2020:
 1. I have applied our model on UP100 dataset. The dimension of the gridworld is 102*64. The files can be found under UP100/Figure/2020-01-04/15/0.0050 .
 2. **Problem**: As the gridworld size is large, the agents are not able to move from one place to a very different part of the state-space. So, the agents are not able to stay in places where crime rate is high. 
-3. **Idea**: 
+3. **Ideas**: 
   *  Can we randomly explore the state space for some amount of time before using the learned model?
-  *  Can we use some intelligent initialization so that our agents gets initialized near the crime location? 
-
+  *  Can we use some smart initialization so that our agents gets initialized near the crime location? 
+4. Crime Frequency Visualization:
+  ![](./UP100/Figure/2020-01-04/CrimeFrequency.png)
 
 
 ### Updates on 09th Dec, 2019:
