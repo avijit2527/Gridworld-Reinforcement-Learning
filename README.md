@@ -1,7 +1,9 @@
 # Gridworld-Reinforcement-Learning
 ## Updates regarding project
 
-
+### Updates on 10th Jan, 2020:
+1. I have set the Kanpur map as background image
+  ![](./UP100/Figure/2020-01-09/15/0.0050/0001.png)
 
 ### Updates on 6th Jan, 2020:
 1. I have applied our model on UP100 dataset. The dimension of the gridworld is 102*64. The files can be found under UP100/Figure/2020-01-04/15/0.0050 .
