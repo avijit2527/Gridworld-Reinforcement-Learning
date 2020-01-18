@@ -4,6 +4,7 @@
 
 
 ### Updates on 18th Jan, 2020:
+1. Below is the analysis of coverage vs miles traveled when varying step penalty. The important thing to notice is that the total distance traveled has reduced with an increasing  penalty. The starting miles traveled and the final miles traveled has a high variance because of less data point reaching that situation.
 
 Step Penalty = 1            |  Step Penalty = 10
 :-------------------------:|:-------------------------:
