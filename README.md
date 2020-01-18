@@ -1,6 +1,19 @@
 # Gridworld-Reinforcement-Learning
 ## Updates regarding project
 
+
+
+### Updates on 18th Jan, 2020:
+
+Step Penalty = 1            |  Step Penalty = 10
+:-------------------------:|:-------------------------:
+![](./Figure/2020-01-17/Average_Distance_from_Reward_States_vs_miles_stepPenalty_1.png)   |  ![](./Figure/2020-01-17/Average_Distance_from_Reward_States_vs_miles_stepPenalty_10.png) 
+
+Step Penalty = 100           | Step Penalty = 1000
+:-------------------------:|:-------------------------:
+![](./Figure/2020-01-17/Average_Distance_from_Reward_States_vs_miles_stepPenalty_100.png)  |  ![](./Figure/2020-01-17/Average_Distance_from_Reward_States_vs_miles_stepPenalty_1000.png)
+
+
 ### Updates on 10th Jan, 2020:
 1. I have set the Kanpur map as background image
   ![](./UP100/Figure/2020-01-09/15/0.0050/0001.png)
